@@ -1,0 +1,12 @@
+{
+    "name": "vlamug/st",
+    "autoload" : {
+        "psr-0" : {
+            "St" : "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.5.0",
+        "sunra/php-simple-html-dom-parser": "1.5.0"
+    }
+}
