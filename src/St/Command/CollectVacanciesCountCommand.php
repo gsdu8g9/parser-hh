@@ -43,10 +43,10 @@ class CollectVacanciesCountCommand extends CommandAbstract
      */
     public function run()
     {
+        /** @var \simple_html_dom $parsed */
         $parsed = $this->parser->parse($this->generateQueryUrl());
         $foundResult = current($parsed->find('.resumesearch__result-count'));
-        preg_match('/\d\s\d+|\d+/', $foundResult->innertext(), $matches);
-        $countVacancies = str_replace(' ', '', $matches[0]);
+        $countVacancies = preg_replace('~[^\d]~', '', explode(' ', $foundResult->innertext())[1]);
 
         // @todo внедрить PDO
         $addRecord = 'insert into `vacancien_count` (`search_string`, `find_result`) values ("' . $this->queryParams->getVacancy() . '", "' . $countVacancies . '")';

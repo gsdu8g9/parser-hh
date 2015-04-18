@@ -10,6 +10,7 @@ interface ParserInterface
 {
     /**
      * @param $resource
+     * @return mixed
      */
     public function parse($resource);
 }
