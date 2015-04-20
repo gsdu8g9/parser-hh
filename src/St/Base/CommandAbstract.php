@@ -1,7 +1,7 @@
 <?php
 
 namespace St\Base;
-use St\Base\CommandInterface;
+use St\Db\Query;
 
 /**
  * Class CommandAbstract
@@ -15,14 +15,22 @@ abstract class CommandAbstract implements CommandInterface
      */
     protected $name;
 
+    /** @var Query */
+    protected $db;
+
     /**
-     * @param $name
+     * @param string $name
+     * @param Query $db
      */
-    public function __construct($name)
+    public function __construct($name, Query $db)
     {
         $this->name = $name;
+        $this->db = $db;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;

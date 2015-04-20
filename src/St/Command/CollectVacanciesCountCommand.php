@@ -3,6 +3,7 @@
 namespace St\Command;
 
 use St\Base\CommandAbstract;
+use St\Db\Query;
 use St\Parser\ParserInterface;
 
 /**
@@ -37,11 +38,12 @@ class CollectVacanciesCountCommand extends CommandAbstract
      * Инициализация данных.
      *
      * @param string $name Название команды.
+     * @param Query $db
      * @param ParserInterface $parser Паресер.
      */
-    public function __construct($name, ParserInterface $parser)
+    public function __construct($name, Query $db, ParserInterface $parser)
     {
-        parent::__construct($name);
+        parent::__construct($name, $db);
         $this->parser = $parser;
     }
 
@@ -63,17 +65,13 @@ class CollectVacanciesCountCommand extends CommandAbstract
             $foundResult = current($parsed->find('.resumesearch__result-count'));
             $countVacancies = preg_replace('~[^\d]~', '', explode(' ', $foundResult->innertext())[1]);
 
-            // @todo внедрить PDO
-            $addRecord = sprintf(
-                'insert into vac (city_id, search_string, find_result) values ("%u", "%s", "%u")',
-                $vacancy->getCityId(),
-                $vacancy->getVacancy(),
-                $countVacancies
-                );
-
             try {
-                $dbc = new \PDO('mysql:host=localhost;dbname=st', 'root', 'root');
-                $dbc->exec($addRecord);
+                $this->db->query(sprintf(
+                    'insert into vac (city_id, search_string, find_result) values ("%u", "%s", "%u")',
+                    $vacancy->getCityId(),
+                    $vacancy->getVacancy(),
+                    $countVacancies
+                ));
             } catch (\PDOException $exc) {
                 echo $exc->getMessage();
                 die();
