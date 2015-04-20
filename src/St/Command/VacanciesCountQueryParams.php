@@ -9,6 +9,12 @@ namespace St\Command;
  */
 class VacanciesCountQueryParams
 {
+    /** Код города москва. */
+    const CODE_CITY_MOSCOW = 1;
+
+    /** Код города Ульяновск. */
+    const CODE_CITY_ULYANOVSK = 1614;
+
     /**
      * Название вакансии.
      *

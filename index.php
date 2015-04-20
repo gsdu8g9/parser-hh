@@ -1,34 +1,32 @@
 <?php
 
+use St\St;
+use St\Command\VacanciesCountQueryParams;
+use St\Command\CollectVacanciesCountCommand;
+use St\Parser\SimpleHtmlParser;
+
 error_reporting(E_ALL);
 
 define('ROOT_DIR', __DIR__);
 
 require_once ROOT_DIR . DIRECTORY_SEPARATOR . '/vendor/autoload.php';
 
-$st = new \St\St();
+$st = new St();
 
-$collectVacanciesCountPhpCommand = new \St\Command\CollectVacanciesCountCommand(
-    'collectVacanciesCountCommandPhp',
-    new \St\Command\VacanciesCountQueryParams('php', 1)
+$collectVacanciesCountCommand = new CollectVacanciesCountCommand(
+    'collectVacanciesCountCommand',
+    new SimpleHtmlParser()
 );
-$collectVacanciesCountPhpCommand->setParser(new \St\Parser\SimpleHtmlParser());
-$st->addCommand($collectVacanciesCountPhpCommand);
-
-$collectVacanciesCountPythonCommand = new \St\Command\CollectVacanciesCountCommand(
-    'collectVacanciesCountCommandPython',
-    new \St\Command\VacanciesCountQueryParams('python', 1)
+$collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('php', VacanciesCountQueryParams::CODE_CITY_MOSCOW)
 );
-$collectVacanciesCountPythonCommand->setParser(new \St\Parser\SimpleHtmlParser());
-$st->addCommand($collectVacanciesCountPythonCommand);
-
-$collectVacanciesCountJavaScriptCommand = new \St\Command\CollectVacanciesCountCommand(
-    'collectVacanciesCountCommandJavascript',
-    new \St\Command\VacanciesCountQueryParams('javascript', 1)
+$collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('python', VacanciesCountQueryParams::CODE_CITY_MOSCOW)
+);
+$collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('javascript', VacanciesCountQueryParams::CODE_CITY_MOSCOW)
 );
 
-$collectVacanciesCountJavaScriptCommand->setParser(new \St\Parser\SimpleHtmlParser());
-
-$st->addCommand($collectVacanciesCountJavaScriptCommand);
+$st->addCommand($collectVacanciesCountCommand);
 
 $st->run();

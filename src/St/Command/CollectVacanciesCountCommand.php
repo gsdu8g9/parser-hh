@@ -5,6 +5,11 @@ namespace St\Command;
 use St\Base\CommandAbstract;
 use St\Parser\ParserInterface;
 
+/**
+ * Команда для сбора количества вакансий.
+ *
+ * @package St\Command
+ */
 class CollectVacanciesCountCommand extends CommandAbstract
 {
     /**
@@ -22,50 +27,92 @@ class CollectVacanciesCountCommand extends CommandAbstract
     private $queryUrlPattern = 'http://hh.ru/search/vacancy?text=%s&area=%u';
 
     /**
-     * Объект с параметрами запроса.
+     * Массив вакансий, для которых необходимо собирать статичтику.
      *
-     * @var VacanciesCountQueryParams
+     * @var VacanciesCountQueryParams[]
      */
-    private $queryParams;
+    private $vacancies = [];
 
     /**
-     * @param $name
-     * @param VacanciesCountQueryParams $queryParams
+     * Инициализация данных.
+     *
+     * @param string $name Название команды.
+     * @param ParserInterface $parser Паресер.
      */
-    public function __construct($name, VacanciesCountQueryParams $queryParams)
+    public function __construct($name, ParserInterface $parser)
     {
         parent::__construct($name);
-        $this->queryParams = $queryParams;
+        $this->parser = $parser;
     }
 
     /**
-     * @return mixed
+     * Сбор статистики количества вакансий.
      */
     public function run()
     {
-        /** @var \simple_html_dom $parsed */
-        $parsed = $this->parser->parse($this->generateQueryUrl());
-        $foundResult = current($parsed->find('.resumesearch__result-count'));
-        $countVacancies = preg_replace('~[^\d]~', '', explode(' ', $foundResult->innertext())[1]);
-
-        // @todo внедрить PDO
-        $addRecord = 'insert into `vacancien_count` (`search_string`, `find_result`) values ("' . $this->queryParams->getVacancy() . '", "' . $countVacancies . '")';
-        try {
-            $dbc = new \PDO('mysql:host=localhost;dbname=st', 'root', 'root');
-            $dbc->exec($addRecord);
-        } catch (\PDOException $exc) {
-            echo $exc->getMessage();
+        if (empty($this->vacancies)) {
+            return false;
         }
+
+        foreach ($this->vacancies as $vacancy) {
+            /** @var \simple_html_dom $parsed */
+            $parsed = $this->parser->parse(
+                $this->generateQueryUrl($vacancy->getVacancy(), $vacancy->getCityId())
+            );
+
+            $foundResult = current($parsed->find('.resumesearch__result-count'));
+            $countVacancies = preg_replace('~[^\d]~', '', explode(' ', $foundResult->innertext())[1]);
+
+            // @todo внедрить PDO
+            $addRecord = sprintf(
+                'insert into vac (city_id, search_string, find_result) values ("%u", "%s", "%u")',
+                $vacancy->getCityId(),
+                $vacancy->getVacancy(),
+                $countVacancies
+                );
+
+            try {
+                $dbc = new \PDO('mysql:host=localhost;dbname=st', 'root', 'root');
+                $dbc->exec($addRecord);
+            } catch (\PDOException $exc) {
+                echo $exc->getMessage();
+                die();
+            }
+        }
+
     }
 
-    private function generateQueryUrl()
+    /**
+     * Добавление параметров запроса для сбора статистики вакансии.
+     *
+     * @param VacanciesCountQueryParams $countQueryParams Контейнер для хранения параметров запроса для сбора статистики.
+     */
+    public function addVacancy(VacanciesCountQueryParams $countQueryParams)
     {
-        return sprintf($this->queryUrlPattern, $this->queryParams->getVacancy(), $this->queryParams->getCityId());
+        $this->vacancies[] = $countQueryParams;
     }
 
+    /**
+     * Установка парсера.
+     *
+     * @param ParserInterface $parser Парсер.
+     */
     public function setParser(ParserInterface $parser)
     {
         $this->parser = $parser;
+    }
+
+    /**
+     * Генерация урл для запроса получения статистики.
+     *
+     * @param string $vacancy Название вакансии.
+     * @param int $city Идентификатор города.
+     *
+     * @return string Сгенерированный урл для запроса.
+     */
+    private function generateQueryUrl($vacancy, $city)
+    {
+        return sprintf($this->queryUrlPattern, $vacancy, $city);
     }
 
 }
