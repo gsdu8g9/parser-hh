@@ -23,10 +23,40 @@ $collectVacanciesCountCommand->addVacancy(
     new VacanciesCountQueryParams('php', VacanciesCountQueryParams::CODE_CITY_MOSCOW)
 );
 $collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('php', VacanciesCountQueryParams::CODE_CITY_ULYANOVSK)
+);
+$collectVacanciesCountCommand->addVacancy(
     new VacanciesCountQueryParams('python', VacanciesCountQueryParams::CODE_CITY_MOSCOW)
 );
 $collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('python', VacanciesCountQueryParams::CODE_CITY_ULYANOVSK)
+);
+$collectVacanciesCountCommand->addVacancy(
     new VacanciesCountQueryParams('javascript', VacanciesCountQueryParams::CODE_CITY_MOSCOW)
+);
+$collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('javascript', VacanciesCountQueryParams::CODE_CITY_ULYANOVSK)
+);
+$collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('golang', VacanciesCountQueryParams::CODE_CITY_MOSCOW)
+);
+$collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('golang', VacanciesCountQueryParams::CODE_CITY_ULYANOVSK)
+);
+$collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('java', VacanciesCountQueryParams::CODE_CITY_MOSCOW)
+);
+$collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('java', VacanciesCountQueryParams::CODE_CITY_ULYANOVSK)
+);
+$collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('rust', VacanciesCountQueryParams::CODE_CITY_MOSCOW)
+);
+$collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('haskell', VacanciesCountQueryParams::CODE_CITY_MOSCOW)
+);
+$collectVacanciesCountCommand->addVacancy(
+    new VacanciesCountQueryParams('erlang', VacanciesCountQueryParams::CODE_CITY_MOSCOW)
 );
 
 $st->addCommand($collectVacanciesCountCommand);
